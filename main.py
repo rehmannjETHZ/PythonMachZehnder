@@ -4,15 +4,12 @@ import os #used for data path
 from tqdm import tqdm
 
 # #load CSV file Jonas
-# path_jonas = open(os.path.expanduser("~/Git_Repos/EvaluationMICADAS/RCD_data2csv.csv"))
+# path_jonas = open(os.path.expanduser("~/Git_Repos/.../RCD_data2csv.csv"))
 # data_file = np.genfromtxt(path_jonas, delimiter=',')
-# #format data file to only have the relevant number; this should be a 28 by 7 matrix
-# DF = np.delete(np.delete(data_file, 0,0), np.s_[:4] ,1)
-# print(DF.shape)
-# # format of DF: 14C counts | 12C (HE) muA | 13C (HE) nA | 13 CH nA (molecular current) |r-time | cyc | sample weight
 
 # Joël's file reader - Jonas file reader does not work at my computer... but as long as main is
 # in the same directory as RDC_data2csv.csv this version should work everywhere.
+
 Time = np.array([])
 Digital = np.array([])
 Analog = np.array([])
@@ -42,7 +39,6 @@ for j in tqdm(range(Size-Bucketsize)[::Bucketsize]):
 
 plt.hist(range(15), 15, weights=BucketsAmount[0:15])
 plt.show()
-
 
 
 def mean(x):
