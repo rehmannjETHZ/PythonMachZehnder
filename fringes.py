@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import os #used for data path
 from tqdm import tqdm
 
-# #load CSV file Jonas
-# path_jonas = open(os.path.expanduser("~/Git_Repos/EvaluationMICADAS/RCD_data2csv.csv"))
-# data_file = np.genfromtxt(path_jonas, delimiter=',')
-# #format data file to only have the relevant number; this should be a 28 by 7 matrix
-# DF = np.delete(np.delete(data_file, 0,0), np.s_[:4] ,1)
-# print(DF.shape)
-# # format of DF: 14C counts | 12C (HE) muA | 13C (HE) nA | 13 CH nA (molecular current) |r-time | cyc | sample weight
 
-# Joël's file reader - Jonas file reader does not work at my computer... but as long as main is
-# in the same directory as RDC_data2csv.csv this version should work everywhere.
+
+def mean(x):
+    return sum(x)/np.size(x)
+
+def weightedmean(x, w):
+    return sum(x*w)/sum(w)
+
+def var(x):
+    return np.sqrt(mean(x*x) - mean(x)**2)
 Time = []
 Ramp = []
 Digital = []
@@ -62,8 +62,8 @@ for i in range(6):
         i+=1
     pbar.close()
 
-    plt.plot(range(len(updown)), updown)
-    plt.show()
+    #plt.plot(range(len(updown)), updown)
+    #plt.show()
 
 
     #cut off incomplete start and ending
@@ -73,13 +73,14 @@ for i in range(6):
 
     updown = updown[1: -1]
 
-
+    runs = np.size(updown)
     all = 0
-
+    allCounts = np.zeros((runs, Bucketnumber))
     for j in tqdm(range(np.size(updown)-1)):
         Bucketsize = int(updown[j]/Bucketnumber) #Checkout Bucketsize in current periode.
         Rest = updown[j] - Bucketsize*Bucketnumber #size of leftover data in this periode
         k = 0
+
         if j%2 == 0:
             for l in range(Bucketnumber):
                 k = 0
@@ -87,6 +88,7 @@ for i in range(6):
                     if Digital[all+l*Bucketsize+k] > Threshhold:
                         Buckets[l] += 1
                         k += Leap
+                        allCounts[j, l] += 1
                     else:
                         k += 1
             k = 0
@@ -105,6 +107,7 @@ for i in range(6):
                     if Digital[all-(l*Bucketsize+k)] > Threshhold:
                         Buckets[l] += 1
                         k += Leap
+                        allCounts[j, l] += 1
                     else:
                         k += 1
             k = 0
@@ -117,19 +120,24 @@ for i in range(6):
 
     allBuckets = allBuckets +Buckets
 
+dCounts = []
+for i in range(np.size(allCounts[0, :])-1):
+    dCounts = dCounts + [var(allCounts[:, i])] ## much too small
 
+dCounts = np.asarray(dCounts)
+print(np.size(dCounts))
+
+print(dCounts)
+x = range(Bucketnumber-1)
+print(np.size(x))
+plt.errorbar(x, allBuckets[0:-1], yerr= np.sqrt(allBuckets[0:-1]), fmt='o')
+plt.show()
 
 plt.hist(range(Bucketnumber-1), Bucketnumber-1, weights=allBuckets[0:-1])
 plt.show()
+plt.savefig('fringe reconstruct.pdf')
 
 
 
-def mean(x):
-    return sum(x)/np.size(x)
 
-def weightedmean(x, w):
-    return sum(x*w)/sum(w)
-
-def var(x):
-    return np.sqrt(mean(x*x) - mean(x)**2)
 
