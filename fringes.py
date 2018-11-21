@@ -13,6 +13,7 @@ def weightedmean(x, w):
 
 def var(x):
     return np.sqrt(mean(x*x) - mean(x)**2)
+
 Time = []
 Ramp = []
 Digital = []
@@ -120,26 +121,30 @@ for i in range(6):
                     else:
                         k += 1
 
-    allBuckets = allBuckets +Buckets
+    allBuckets = allBuckets + Buckets
 dT = (Time[1] - Time[0])/(mean(updown)*Bucketnumber) #Time Passing for each bucket
 print('dT', dT)
-dCounts = []
-for i in range(np.size(allCounts[0, :])-1):
-    dCounts = dCounts + [var(allCounts[:, i])] ## much too small
+
+dCounts = [var(allCounts[:, i]) for i in range(np.size(allCounts[0, :])-1)]
+print(type(Bucketnumber-1))
+
+dCounts_sqrt = [np.sqrt(allBuckets[i]) for i in range(Bucketnumber-1)] #larger error
+
+print(dCounts_sqrt)
 
 dCounts = np.asarray(dCounts)
 print(np.size(dCounts))
+print(type(allBuckets), allBuckets.shape)
+
 
 print(dCounts)
 x = range(Bucketnumber-1)
 print(np.size(x))
-plt.errorbar(x, allBuckets[0:-1]/runs, yerr= dCounts, fmt='o')
+plt.errorbar(x, allBuckets[0:-1], yerr= dCounts_sqrt, fmt=' ')
 plt.xlabel('Bucketnumber, each Bucket has an average length of sec')
-plt.show()
-
 plt.hist(range(Bucketnumber-1), Bucketnumber-1, weights=allBuckets[0:-1])
 plt.show()
-plt.savefig('fringe reconstruct.pdf')
+plt.savefig('fringe_reconstruction.pdf')
 
 
 
