@@ -16,7 +16,7 @@ def var(x):
 Time = []
 Ramp = []
 Digital = []
-Bucketnumber = 100
+Bucketnumber = 40
 Buckets = np.zeros((Bucketnumber))
 allBuckets = np.zeros((Bucketnumber))
 for i in range(6):
@@ -73,6 +73,8 @@ for i in range(6):
 
     updown = updown[1: -1]
 
+
+
     runs = np.size(updown)
     all = 0
     allCounts = np.zeros((runs, Bucketnumber))
@@ -119,7 +121,8 @@ for i in range(6):
                         k += 1
 
     allBuckets = allBuckets +Buckets
-
+dT = (Time[1] - Time[0])/(mean(updown)*Bucketnumber) #Time Passing for each bucket
+print('dT', dT)
 dCounts = []
 for i in range(np.size(allCounts[0, :])-1):
     dCounts = dCounts + [var(allCounts[:, i])] ## much too small
@@ -130,7 +133,8 @@ print(np.size(dCounts))
 print(dCounts)
 x = range(Bucketnumber-1)
 print(np.size(x))
-plt.errorbar(x, allBuckets[0:-1], yerr= np.sqrt(allBuckets[0:-1]), fmt='o')
+plt.errorbar(x, allBuckets[0:-1]/runs, yerr= dCounts, fmt='o')
+plt.xlabel('Bucketnumber, each Bucket has an average length of sec')
 plt.show()
 
 plt.hist(range(Bucketnumber-1), Bucketnumber-1, weights=allBuckets[0:-1])
