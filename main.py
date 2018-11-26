@@ -9,8 +9,6 @@ from tqdm import tqdm
 # path_jonas = open(os.path.expanduser("~/Git_Repos/.../RCD_data2csv.csv"))
 # data_file = np.genfromtxt(path_jonas, delimiter=',')
 
-# Joël's file reader - Jonas file reader does not work at my computer... but as long as main is
-# in the same directory as RDC_data2csv.csv this version should work everywhere.
 
 Time = np.array([])
 Digital = np.array([])
@@ -41,6 +39,8 @@ for j in tqdm(range(Size-Bucketsize)[::Bucketsize]):
 
 entries, bin_edges, patches = plt.hist(range(15), 15, weights=BucketsAmount[0:15]/sum(BucketsAmount[0:15]))
 bin_middles = 0.5*(bin_edges[1:] + bin_edges[:-1])
+plt.errorbar(bin_middles, BucketsAmount[0:15]/sum(BucketsAmount[0:15]), yerr=np.sqrt(BucketsAmount[0:15])/sum(BucketsAmount[0:15]), capsize=4, elinewidth=1, linestyle=' ')
+
 
 # poisson function, parameter lamb is the fit parameter
 
@@ -57,6 +57,9 @@ x_plot = np.linspace(0, 14, 100)
 print(x_plot)
 
 plt.plot(x_plot, poisson(x_plot, *parameters), 'r-', lw=2)
+plt.xlabel('bin number')
+plt.ylabel('relative amount of counts in each bin')
+plt.legend(('Poissionian best fit', 'bins with relative counts', 'error bars'), loc='upper right')
 plt.show()
 
 
