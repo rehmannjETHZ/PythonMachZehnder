@@ -81,6 +81,8 @@ plt.plot(x_six, 0.4*abs(np.cos(1.2* 2*x_six /180 * math.pi + (math.pi-2.8)/4))+0
 plt.errorbar(angle_eraser_eight, contrast(mV_max_eight, mV_min_eight), yerr_eight, linestyle='')
 plt.xlabel('angle of the eraser [deg]')
 plt.ylabel('contrast [1]')
+plt.legend(('data points', 'fit of $|\sin(2\cdot \phi)|$ for eye guidance', 'error bars of the data points'))
+plt.savefig('eraser_angle.pdf')
 plt.show()
 
 

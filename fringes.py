@@ -139,13 +139,19 @@ print(type(allBuckets), allBuckets.shape)
 
 print(dCounts)
 x = range(Bucketnumber-1)
+#xy = np.arange(Bucketnumber-1)
 print(np.size(x))
+
+
 entries, bin_edges, patches = plt.hist(range(Bucketnumber-1), Bucketnumber-1, weights=allBuckets[0:-1])
 bin_middles = 0.5*(bin_edges[1:] + bin_edges[:-1])
-plt.errorbar(bin_middles, allBuckets[0:-1], yerr= dCounts_sqrt, fmt=' ')
-plt.xlabel('Bucketnumber, each Bucket has an average length of sec')
-plt.show()
+plt.errorbar(bin_middles, allBuckets[0:-1], yerr= dCounts_sqrt, fmt=' ', capsize=4, elinewidth=1, linestyle=' ')
+plt.xlabel('bin number')
+plt.ylabel('counts in bins')
+plt.legend(('bins with counts', 'error bars'), loc='lower right')
 plt.savefig('fringe_reconstruction.pdf')
+plt.show()
+
 
 
 

@@ -60,6 +60,7 @@ plt.plot(x_plot, poisson(x_plot, *parameters), 'r-', lw=2)
 plt.xlabel('bin number')
 plt.ylabel('relative amount of counts in each bin')
 plt.legend(('Poissionian best fit', 'bins with relative counts', 'error bars'), loc='upper right')
+plt.savefig('counting_stats.pdf')
 plt.show()
 
 
