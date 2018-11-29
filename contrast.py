@@ -1,6 +1,7 @@
 import numpy as np 
 import math
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
 
  #measurement 1 bad data
@@ -73,10 +74,17 @@ x_six = np.linspace(0, 100, 200)
 def contrast(V_max, V_min):
 	return -(V_max - V_min)/(V_max + V_min)
 
+def sin_fit(x, a, b, c, d):
+	return a * abs(np.cos(b * x /180 + c)) + d
+
+fit_points, __ = curve_fit(sin_fit, angle_eraser_eight, contrast(mV_max_eight, mV_min_eight))
+
 xerr_eight = 1
 yerr_eight = 5*np.sqrt(mV_max_eight**2 + mV_min_eight**2)/(mV_max_eight + mV_min_eight)**2
 print(yerr_eight)
+print(*fit_points)
 plt.plot(angle_eraser_eight, contrast(mV_max_eight, mV_min_eight), 'b+')
+plt.plot(x_six, sin_fit(x_six, *fit_points))
 plt.plot(x_six, 0.4*abs(np.cos(1.2* 2*x_six /180 * math.pi + (math.pi-2.8)/4))+0.05, 'r')
 plt.errorbar(angle_eraser_eight, contrast(mV_max_eight, mV_min_eight), yerr_eight, linestyle='')
 plt.xlabel('angle of the eraser [deg]')
