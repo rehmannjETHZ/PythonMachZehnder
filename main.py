@@ -14,11 +14,11 @@ Time = np.array([])
 Digital = np.array([])
 Analog = np.array([])
 for i in range(9):
-    Time = np.append(Time, np.genfromtxt('Photon_stats_0%s.csv' % (i +1), delimiter=',')[3:-1, 0])
+    Time = np.append(Time, np.genfromtxt('Photon_stats_0%s.csv' % (i +1), delimiter=',', encoding='utf8')[3:-1, 0])
     # Digital = np.append(Digital, np.genfromtxt('Photon_stats_0%s.csv' % (i +1), delimiter=',')[3:-1, 2] )
-    Analog = np.append(Analog, np.genfromtxt('Photon_stats_0%s.csv' % (i +1), delimiter=',')[3:-1, 1])
+    Analog = np.append(Analog, np.genfromtxt('Photon_stats_0%s.csv' % (i +1), delimiter=',', encoding='utf8')[3:-1, 1])
 Size = np.size(Time)
-Length = 400e-4
+Length = 1e-2 #length of a measuring intervall in seconds
 Bucketsize = int(Size/((Time[-1] - Time[0])/Length))
 Threshhold = 2
 Leap = 10
@@ -49,21 +49,18 @@ def poisson(k, lamb):
 
 # fit with curve_fit
 parameters, cov_matrix = curve_fit(poisson, bin_middles, entries)
-print(parameters)
-
+print('lambda = ', parameters.round(2))
+print('Bucketsize = ', Bucketsize)
 
 # plot poisson-deviation with fitted parameter
+index = 1
 x_plot = np.linspace(0, 14, 100)
-print(x_plot)
-
 plt.plot(x_plot, poisson(x_plot, *parameters), 'r-', lw=2)
-plt.xlabel('bin number')
-plt.ylabel('relative amount of counts in each bin')
-plt.legend(('Poissionian best fit', 'bins with relative counts', 'error bars'), loc='upper right')
-plt.savefig('counting_stats.pdf')
+plt.xlabel('counts')
+plt.ylabel('probability density')
+plt.legend(('Poissionian best fit with $\lambda = $%.2f' %parameters.round(2), 'bins with relative counts', 'error bars'), loc='best')
+plt.savefig('counting_stats_%i.pdf' %index)
 plt.show()
-
-
 
 def mean(x):
     return sum(x)/np.size(x)

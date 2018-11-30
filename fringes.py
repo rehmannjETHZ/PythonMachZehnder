@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 import os #used for data path
 from tqdm import tqdm
 
@@ -130,25 +131,29 @@ print(type(Bucketnumber-1))
 
 dCounts_sqrt = [np.sqrt(allBuckets[i]) for i in range(Bucketnumber-1)] #larger error
 
-print(dCounts_sqrt)
-
 dCounts = np.asarray(dCounts)
-print(np.size(dCounts))
-print(type(allBuckets), allBuckets.shape)
 
+print('all buckets = ', allBuckets[0:-1])
 
 print(dCounts)
 x = range(Bucketnumber-1)
-#xy = np.arange(Bucketnumber-1)
-print(np.size(x))
-
 
 entries, bin_edges, patches = plt.hist(range(Bucketnumber-1), Bucketnumber-1, weights=allBuckets[0:-1])
 bin_middles = 0.5*(bin_edges[1:] + bin_edges[:-1])
+print('bin_middles = ', bin_middles)
+def fit_function(x, a, b, c):
+    return a * np.cos(b*x) + c
+guess_fit = [600, 0.1, 1250]
+
+#fitting
+fitting_parameters, __ = curve_fit(fit_function, bin_middles, allBuckets[0:-1], guess_fit)
+print('fitting_parameters', fitting_parameters)
+x = np.linspace(bin_middles[0], bin_middles[-1], 200)
 plt.errorbar(bin_middles, allBuckets[0:-1], yerr= dCounts_sqrt, fmt=' ', capsize=4, elinewidth=1, linestyle=' ')
+plt.plot(x, fit_function(x, *fitting_parameters), 'r-')
 plt.xlabel('bin number')
 plt.ylabel('counts in bins')
-plt.legend(('bins with counts', 'error bars'), loc='lower right')
+plt.legend(('best fit of $\cos(x)$', 'bins with counts', 'error bars'), loc='lower right')
 plt.savefig('fringe_reconstruction.pdf')
 plt.show()
 
